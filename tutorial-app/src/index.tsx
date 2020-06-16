@@ -52,6 +52,7 @@ class Board extends React.Component<BoardProps, NUllState> {
   renderSquare(i: number): JSX.Element {
     return (
       <Square
+        key={i.toString()}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -59,25 +60,17 @@ class Board extends React.Component<BoardProps, NUllState> {
   }
 
   render(): JSX.Element {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+    const range = Array(this.props.width).fill(null)
+    const board = range.map((v, i) => {
+      return (
+        <div className="board-row" key={i.toString()}>
+          {range.map((x, j) => {
+            return this.renderSquare((i * this.props.width) + j);
+          })}
         </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+      )
+    });
+    return <div>{board}</div>;
   }
 }
 
