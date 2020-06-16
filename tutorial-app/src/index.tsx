@@ -52,7 +52,6 @@ interface BoardProps {
 
 class Board extends React.Component<BoardProps, NUllState> {
   renderSquare(i: number): JSX.Element {
-    console.log(this.props.winSqs?.includes(i), this.props.winSqs, i);
     return (
       <Square
         key={i.toString()}
@@ -145,7 +144,7 @@ class Game extends React.Component<GameProps, GameState> {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winSqs = calculateWinner(current.squares);
-    const winner = winSqs ? winSqs[0] : null;
+    const winner = winSqs ? current.squares[winSqs[0]] : null;
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -162,8 +161,11 @@ class Game extends React.Component<GameProps, GameState> {
     });
 
     let status;
+    console.log(winner);
     if (winner) {
       status = "Winner: " + winner;
+    } else if (this.state.stepNumber === this.props.width * this.props.width) {
+      status = "Draw";
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
