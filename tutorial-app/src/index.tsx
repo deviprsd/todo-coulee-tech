@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function calculateWinner(squares: string[]): string | null {
+function calculateWinner(squares: string[]) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -17,7 +17,7 @@ function calculateWinner(squares: string[]): string | null {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return lines[i];
     }
   }
 
@@ -31,12 +31,13 @@ interface NUllState {}
 
 interface SquareProps {
   value: string,
+  winSq: boolean,
   onClick: () => void
 }
 
 function Square(props: SquareProps): JSX.Element {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={`square ${props.winSq ? 'square-win' : ''}`} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -45,14 +46,17 @@ function Square(props: SquareProps): JSX.Element {
 interface BoardProps {
   squares: string[],
   width: number,
+  winSqs: number[] | null,
   onClick: (i: number) => void
 }
 
 class Board extends React.Component<BoardProps, NUllState> {
   renderSquare(i: number): JSX.Element {
+    console.log(this.props.winSqs?.includes(i), this.props.winSqs, i);
     return (
       <Square
         key={i.toString()}
+        winSq={this.props.winSqs !== null && this.props.winSqs?.includes(i)}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -140,7 +144,8 @@ class Game extends React.Component<GameProps, GameState> {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winSqs = calculateWinner(current.squares);
+    const winner = winSqs ? winSqs[0] : null;
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -167,6 +172,7 @@ class Game extends React.Component<GameProps, GameState> {
       <div className="game">
         <div className="game-board">
           <Board
+            winSqs={winSqs}
             width={this.props.width}
             squares={current.squares}
             onClick={i => this.handleClick(i)}
