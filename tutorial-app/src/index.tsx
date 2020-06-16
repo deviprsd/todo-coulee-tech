@@ -44,6 +44,7 @@ function Square(props: SquareProps): JSX.Element {
 
 interface BoardProps {
   squares: string[],
+  width: number,
   onClick: (i: number) => void
 }
 
@@ -80,19 +81,33 @@ class Board extends React.Component<BoardProps, NUllState> {
   }
 }
 
+interface History {
+  squares: string[], 
+  row: number, 
+  col: number, 
+  player: string
+}
+
 interface GameState {
-  history: { squares: string[] }[],
+  history: History[],
   stepNumber: number,
   xIsNext: boolean,
 }
 
-class Game extends React.Component<NullProps, GameState> {
-  constructor(props: NullProps) {
+interface GameProps {
+  width: number
+}
+
+class Game extends React.Component<GameProps, GameState> {
+  constructor(props: GameProps) {
     super(props);
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          row: -1,
+          col: -1,
+          player: '',
         }
       ],
       stepNumber: 0,
@@ -111,7 +126,10 @@ class Game extends React.Component<NullProps, GameState> {
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: squares,
+          row: (i / this.props.width) | 0, // integer division
+          col: (i % this.props.width),
+          player: squares[i]
         }
       ]),
       stepNumber: history.length,
@@ -133,11 +151,14 @@ class Game extends React.Component<NullProps, GameState> {
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
+        `Go to move #${move} | '${step.player}' (${step.row + 1} , ${step.col + 1})` :
         'Go to game start';
+      const typographicDesc = this.state.stepNumber === move ?
+        <b>{desc}</b> : 
+        desc
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)}>{typographicDesc}</button>
         </li>
       );
     });
@@ -153,6 +174,7 @@ class Game extends React.Component<NullProps, GameState> {
       <div className="game">
         <div className="game-board">
           <Board
+            width={this.props.width}
             squares={current.squares}
             onClick={i => this.handleClick(i)}
           />
@@ -168,4 +190,4 @@ class Game extends React.Component<NullProps, GameState> {
 
 // ========================================
 
-ReactDOM.render(<Game />, document.getElementById("root"));
+ReactDOM.render(<Game width={3} />, document.getElementById("root"));
