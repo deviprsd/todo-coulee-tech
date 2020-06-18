@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Divider, List, ListItem, ListItemIcon, ListItemText, Avatar } from '@material-ui/core';
 import { pink } from '@material-ui/core/colors';
 import { FormatListBulletedRounded, EqualizerRounded, AssignmentRounded } from '@material-ui/icons';
@@ -24,14 +25,14 @@ const TodoDrawer: React.FC<NullProps> = () => {
     return (
         <div>
             <div className={classes.toolbar}>
-                <Avatar variant="rounded" className={classes.pink}>
+                <Avatar component={ RouterLink } to="/" variant="rounded" className={classes.pink}>
                     <AssignmentRounded />
                 </Avatar>
             </div>
             <Divider />
             <List>
-                {['TODO List', 'Statistics'].map((text) => (
-                    <ListItem button key={text}>
+                {['TODO List', 'Statistics'].map((text, index) => (
+                    <ListItem button component={ RouterLink } to={text === 'Statistics' ? '/statistics' : '/tasks'} key={`${text}-${index}`}>
                         <ListItemIcon>{text === 'Statistics' ? <EqualizerRounded /> : <FormatListBulletedRounded />}</ListItemIcon>
                         <ListItemText primary={text} />
                     </ListItem>

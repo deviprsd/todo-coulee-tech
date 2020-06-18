@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: 'flex',
     },
+    grow: {
+        flexGrow: 1,
+    },
     appBar: (prop: TodoNavProps) => ({
         [theme.breakpoints.up('sm')]: {
             width: `calc(100% - ${prop.width}px)`,
@@ -51,38 +54,40 @@ const TodoNav: React.FC<TodoNavProps> = (props) => {
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <IconButton
-                      aria-label={drawerOpen ? 'clode drawer' : 'open drawer'}
+                      aria-label={drawerOpen ? "clode drawer" : "open drawer"}
                       className={classes.menuButton}
-                      color='inherit'
+                      color="inherit"
                       onClick={handleDrawerToggle}>
                         <MenuRounded />
                     </IconButton>
-                    <Typography variant='h6' noWrap>
+                    <Typography variant="h6" noWrap>
                         {props.title}
                     </Typography>
+                    <div className={classes.grow} />
+                    { props.children }
                 </Toolbar>
             </AppBar>
-            <nav className={classes.drawer} aria-label='drawer with menus'>
-                <Hidden smUp implementation='css'>
+            <nav className={classes.drawer} aria-label="drawer with menus">
+                <Hidden smUp implementation="css">
                     <Drawer
                       anchor={theme.direction === 'rtl' ? 'right': 'left'}
                       classes={{
                         paper: classes.drawerPaper,
                       }}
                       open={drawerOpen}
-                      variant='temporary'
+                      variant="temporary"
                       onClose={handleDrawerToggle}
                       ModalProps={{keepMounted: true}}>
                         <TodoDrawer />
                     </Drawer>
                 </Hidden>
-                <Hidden xsDown implementation='css'>
+                <Hidden xsDown implementation="css">
                     <Drawer
                       anchor={theme.direction === 'rtl' ? 'right': 'left'}
                       classes={{
                         paper: classes.drawerPaper,
                       }}
-                      variant='permanent'>
+                      variant="permanent">
                         <TodoDrawer />
                     </Drawer>
                 </Hidden>
