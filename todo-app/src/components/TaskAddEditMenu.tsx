@@ -4,7 +4,7 @@ import { IconButton } from '@material-ui/core';
 import { DoneRounded } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 
-const TaskAddMenu: React.FC<NullProps> = () => {
+const TaskAddEditMenu: React.FC<NullProps> = () => {
     const history = useHistory();
 
     return (
@@ -16,4 +16,4 @@ const TaskAddMenu: React.FC<NullProps> = () => {
     )
 }
 
-export default TaskAddMenu;
+export default TaskAddEditMenu;
