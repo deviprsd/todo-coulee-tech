@@ -1,15 +1,25 @@
 import React from 'react';
-import { NullProps } from "../explicit-types";
 import { IconButton } from '@material-ui/core';
 import { DoneRounded } from '@material-ui/icons';
-import { useHistory } from 'react-router-dom';
 
-const TaskAddEditMenu: React.FC<NullProps> = () => {
-    const history = useHistory();
+interface TaskAddEditMenuProps {
+    form: HTMLFormElement | null
+}
+
+const TaskAddEditMenu: React.FC<TaskAddEditMenuProps> = ({ form }) => {
+    const handleFormSubmit = () => {
+        if (form) {
+            if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+            } else {
+                form.dispatchEvent(new Event('submit', {cancelable: true}));
+            }
+        }
+    }
 
     return (
         <div style={{display: 'flex'}}>
-            <IconButton color="inherit" onClick={() => history.goBack()}>
+            <IconButton color="inherit" onClick={handleFormSubmit}>
                 <DoneRounded />
             </IconButton>
         </div>

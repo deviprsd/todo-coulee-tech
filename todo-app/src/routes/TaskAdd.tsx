@@ -1,17 +1,26 @@
-import React, { useEffect } from 'react';
-import { RouteProps } from '../explicit-types';
+import React, { useEffect, useRef } from 'react';
+import { RouteProps, Task } from '../explicit-types';
 import TaskAddMenu from '../components/TaskAddEditMenu';
 import TaskAddEditForm from '../components/TaskAddEditForm';
 
-const TaskAdd: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu }) => {    
+const TaskAdd: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu }) => {   
+    const formEl = useRef<HTMLFormElement>(null);
+
     useEffect(() => {
         setNavTitle('Add New Task');
-        setMenu(<TaskAddMenu />);
+        setMenu(<TaskAddMenu form={formEl.current} />);
         setDrawerMenu(null);
     }, [setNavTitle, setMenu, setDrawerMenu]);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, submit: Task) => {
+        e.preventDefault();
+        if(e.currentTarget.checkValidity()) {
+
+        } 
+    }
     
     return (
-        <TaskAddEditForm />
+        <TaskAddEditForm handleSubmit={handleSubmit} formRef={formEl} />
     )
 }
 

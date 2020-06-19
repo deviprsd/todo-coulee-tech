@@ -16,8 +16,8 @@ const useFilter = (query: Query) => {
     return (task: Task) => {
         switch (query) {
             case Query.ALL: return true;
-            case Query.CHECKED: return task.active === true;
-            case Query.UNCHECKED: return task.active === false;
+            case Query.CHECKED: return task.active === false;
+            case Query.UNCHECKED: return task.active === true;
         }
     }
 }
@@ -46,7 +46,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, query }) => {
                                 <ListItemIcon>
                                     <Checkbox
                                         edge="start"
-                                        checked={task.active}
+                                        checked={!task.active}
                                         tabIndex={-1}
                                         disableRipple
                                         inputProps={{ 'aria-labelledby': labelId }}

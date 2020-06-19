@@ -1,7 +1,8 @@
-import { NullProps } from "../explicit-types";
-import React, { useReducer } from 'react';
+import React, { useReducer, useRef } from 'react';
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { Paper, TextField, MenuItem } from "@material-ui/core";
+import { v4 as uuidv4 } from 'uuid';
+import { Task } from '../explicit-types';
 
 const status = [
     {
@@ -61,6 +62,7 @@ const reducer = (state: State, action: Action) => {
             return {...state, active: action.payload.active};
         case 'ERROR':
             return {...state, error: {
+                ...state.error,
                 ...action.payload.error
             }};
         default: return state;
@@ -131,19 +133,42 @@ const useValidator = (title = '', description = '', active = 'INACTIVE'):
 }
 
 interface TaskAddEditFormProps {
+    id?: string,
     title?: string,
     description?: string,
-    active?: 'ACTIVE' | 'INACTIVE'
+    active?: 'ACTIVE' | 'INACTIVE',
+    formRef: React.RefObject<HTMLFormElement>,
+    handleSubmit: (e: React.FormEvent<HTMLFormElement>, submit: Task) => void
 }
 
-const TaskAddEditForm: React.FC<TaskAddEditFormProps> = ({ title, description, active }) => {
+const TaskAddEditForm: React.FC<TaskAddEditFormProps> = ({ title, description, active, id, handleSubmit, formRef }) => {
     const classes = useStyles();
     const [state, validator] = useValidator(title, description, active);
+    const titleInputRef = useRef<HTMLElement>(null);
+    const descriptionInputRef = useRef<HTMLElement>(null);
+
+    const handleAddEditSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
+        // change event doesn't trigger
+        const evt = new Event('blur', { bubbles: true })
+        titleInputRef.current!.dispatchEvent(evt);
+        descriptionInputRef.current!.dispatchEvent(evt);
+
+        handleSubmit(e, {
+            id: id ? id : uuidv4(),
+            title: state.title,
+            description: state.description,
+            active: state.active === 'ACTIVE'
+        });
+    }
 
     return (
         <div className={classes.root}>
             <Paper elevation={2} className={classes.paper}>
-                <form noValidate autoComplete="off">
+                <form 
+                  ref={formRef}
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={handleAddEditSubmit}>
                     <div>
                         <TextField 
                           id="task-title"
@@ -154,7 +179,9 @@ const TaskAddEditForm: React.FC<TaskAddEditFormProps> = ({ title, description, a
                           error={state.error.title}
                           value={state.title}
                           onChange={validator('TITLE')}
+                          onBlur={validator('TITLE')}
                           helperText={state.error.titleErrMessage}
+                          inputRef={titleInputRef}
                           margin="normal"/>
                         
                         <TextField 
@@ -169,6 +196,8 @@ const TaskAddEditForm: React.FC<TaskAddEditFormProps> = ({ title, description, a
                           error={state.error.description}
                           value={state.description}
                           onChange={validator('DESCRIPTION')}
+                          onBlur={validator('DESCRIPTION')}
+                          inputRef={descriptionInputRef}
                           helperText={state.error.descriptionErrMessage}
                           margin="normal"/>
                         
