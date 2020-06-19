@@ -1,9 +1,9 @@
-import React, { Suspense, lazy, useState } from 'react';
+import React, { Suspense, lazy, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, LinearProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Nav from './components/Nav';
-import { NullProps } from './explicit-types';
+import { NullProps, DrawerMenuActions } from './explicit-types';
 
 const Tasks = lazy(() => import('./routes/Tasks'));
 const TaskDetail = lazy(() => import('./routes/TaskDetail'));
@@ -20,39 +20,53 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
     }
 }));
 
-const TodoApp: React.FC<NullProps> = () => {
-    const classes = useStyle();
-
+const useNav = () => {
     const [title, setTitle] = useState<null | string>(null);
-    const handleTitleChanges = (title: string) => {
+    const handleTitleChanges = useCallback((title: string) => {
         document.title = `${title} | ToDo Coulee Tech`;
         setTitle(title);
-    }
+    }, []);
 
     const [menu, setMenu] = useState<React.ReactNode>(null);
-    const handleMenuChanges = (menu: React.ReactNode) => {
+    const handleMenuChanges = useCallback((menu: React.ReactNode) => {
         setMenu(menu);
-    }
+    }, []);
 
-    const routeProps  = (props: any) => ({
-        setNavTitle: handleTitleChanges,
-        setMenu: handleMenuChanges,
-        ...props
-    });
+    const [drawerSelected, setDrawerSelected] = useState<DrawerMenuActions>(null);
+    const handleDrawerSelectedChanges = useCallback((selected: DrawerMenuActions) => {
+        setDrawerSelected(selected);
+    }, []);
+
+    return {
+        routeProps: (props: any) => ({
+            setNavTitle: handleTitleChanges,
+            setMenu: handleMenuChanges,
+            setDrawerMenu: handleDrawerSelectedChanges,
+            ...props
+        }),
+        title: title,
+        menu: menu,
+        selected: drawerSelected,
+    }
+}
+
+const TodoApp: React.FC<NullProps> = () => {
+    const classes = useStyle();
+    const nav = useNav();
 
     return (
         <Router>
-            <Nav title={title} width={drawerWidth} children={menu} />
+            <Nav title={nav.title} width={drawerWidth} children={nav.menu} selected={nav.selected} />
             <main className={classes.container}>
                 <div className={classes.toolbar} />
                 <Suspense fallback={<LinearProgress color="secondary" />}>
                     <Container maxWidth="xl">
                         <Switch>
-                            <Route path="/" exact render={(props) => <Tasks {...routeProps(props)} />}/>
-                            <Route path="/tasks" render={(props) => <Tasks {...routeProps(props)} />} />
-                            <Route path="/task/add" render={(props) => <TaskDetail {...routeProps(props)} />} />
-                            <Route path="/task/:id" render={(props) => <TaskDetail {...routeProps(props)} />} />
-                            <Route path="/statistics" render={(props) => <Statistics {...routeProps(props)} />} />
+                            <Route path="/" exact render={(props) => <Tasks {...nav.routeProps(props)} />}/>
+                            <Route path="/tasks" render={(props) => <Tasks {...nav.routeProps(props)} />} />
+                            <Route path="/task/add" render={(props) => <TaskDetail {...nav.routeProps(props)} />} />
+                            <Route path="/task/:id" render={(props) => <TaskDetail {...nav.routeProps(props)} />} />
+                            <Route path="/statistics" render={(props) => <Statistics {...nav.routeProps(props)} />} />
                         </Switch>
                     </Container>
                 </Suspense>

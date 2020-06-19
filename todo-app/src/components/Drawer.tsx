@@ -4,7 +4,7 @@ import { Divider, List, ListItem, ListItemIcon, ListItemText, Avatar } from '@ma
 import { pink } from '@material-ui/core/colors';
 import { FormatListBulletedRounded, EqualizerRounded, AssignmentRounded } from '@material-ui/icons';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { NullProps } from '../explicit-types';
+import { DrawerMenuActions } from '../explicit-types';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     toolbar: {
@@ -19,8 +19,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
-const TodoDrawer: React.FC<NullProps> = () => {
+interface DrawerProps {
+    toggle?: () => void,
+    selected: DrawerMenuActions
+}
+
+const TodoDrawer: React.FC<DrawerProps> = ({ toggle, selected }) => {
     const classes = useStyles();
+    const drawerActions: DrawerMenuActions[] = ['Tasks', 'Statistics'];
 
     return (
         <div>
@@ -31,8 +37,14 @@ const TodoDrawer: React.FC<NullProps> = () => {
             </div>
             <Divider />
             <List>
-                {['TODO List', 'Statistics'].map((text, index) => (
-                    <ListItem button component={ RouterLink } to={text === 'Statistics' ? '/statistics' : '/tasks'} key={`${text}-${index}`}>
+                {drawerActions.map((text, index) => (
+                    <ListItem
+                      selected={ selected === text }
+                      button
+                      component={ RouterLink }
+                      to={text === 'Statistics' ? '/statistics' : '/tasks'}
+                      onClick={() => toggle && toggle()}
+                      key={`${text}-${index}`}>
                         <ListItemIcon>{text === 'Statistics' ? <EqualizerRounded /> : <FormatListBulletedRounded />}</ListItemIcon>
                         <ListItemText primary={text} />
                     </ListItem>

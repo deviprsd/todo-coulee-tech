@@ -3,8 +3,20 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Fab, Zoom } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { RouteProps } from '../explicit-types';
+import { RouteProps, TaskMenuActions } from '../explicit-types';
 import TaskMenu from '../components/TaskMenu';
+
+enum Query {
+    ALL, CHECKED, UNCHECKED, DELETE, REFRESH
+}
+
+type State = {
+    query: Query
+}
+
+type Action = {
+    query: TaskMenuActions
+}
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {},
@@ -27,18 +39,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
-enum Query {
-    ALL, CHECKED, UNCHECKED
-}
-
-type State = {
-    query: Query
-}
-
-type Action = {
-    query: 'ALL' | 'COMPLETED' | 'UNCOMPLETED'
-}
-
 const reducer = (state: State, action: Action) => {
     switch (action.query) {
         case 'ALL':
@@ -47,20 +47,26 @@ const reducer = (state: State, action: Action) => {
             return { query: Query.CHECKED };
         case 'UNCOMPLETED':
             return { query: Query.UNCHECKED };
+        case 'DELETE':
+            return { query: Query.DELETE };
+        case 'REFRESH':
+                return { query: Query.REFRESH };
         default:
             return state
     }
 }
 
-const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu }) => {
+const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu }) => {
     const [state, dispatch] = useReducer(reducer, { query: Query.ALL });
-    const handleFilterDispatch = (type: 'ALL' | 'COMPLETED' | 'UNCOMPLETED') => {
+    const handleFilterDispatch = (type: TaskMenuActions) => {
         dispatch({ query: type })
     };
+
     useEffect(() => {
-        setNavTitle('Tasks')
+        setNavTitle('Tasks');
+        setDrawerMenu('Tasks');
         setMenu(<TaskMenu filter={handleFilterDispatch} />);
-    }, [setNavTitle, setMenu]);
+    }, [setNavTitle, setMenu, setDrawerMenu]);
     
     const classes = useStyles();
 

@@ -3,10 +3,12 @@ import { AppBar, Toolbar, Typography, Hidden, Drawer, IconButton, CssBaseline } 
 import { MenuRounded } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/styles';
 import TodoDrawer from './Drawer';
+import { DrawerMenuActions } from '../explicit-types';
 
 interface TodoNavProps {
     title: string | null,
     width: number,
+    selected: DrawerMenuActions
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -78,7 +80,7 @@ const TodoNav: React.FC<TodoNavProps> = (props) => {
                       variant="temporary"
                       onClose={handleDrawerToggle}
                       ModalProps={{keepMounted: true}}>
-                        <TodoDrawer />
+                        <TodoDrawer toggle={handleDrawerToggle} selected={props.selected} />
                     </Drawer>
                 </Hidden>
                 <Hidden xsDown implementation="css">
@@ -88,7 +90,7 @@ const TodoNav: React.FC<TodoNavProps> = (props) => {
                         paper: classes.drawerPaper,
                       }}
                       variant="permanent">
-                        <TodoDrawer />
+                        <TodoDrawer selected={props.selected} />
                     </Drawer>
                 </Hidden>
             </nav>
