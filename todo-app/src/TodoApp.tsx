@@ -7,6 +7,8 @@ import { NullProps, DrawerMenuActions } from './explicit-types';
 
 const Tasks = lazy(() => import('./routes/Tasks'));
 const TaskDetail = lazy(() => import('./routes/TaskDetail'));
+const TaskAdd = lazy(() => import('./routes/TaskAdd'));
+const TaskEdit = lazy(() => import('./routes/TaskEdit'));
 const Statistics = lazy(() => import('./routes/Statistics'));
 
 const drawerWidth = 200;
@@ -62,10 +64,11 @@ const TodoApp: React.FC<NullProps> = () => {
                 <Suspense fallback={<LinearProgress color="secondary" />}>
                     <Container maxWidth="xl">
                         <Switch>
-                            <Route path="/" exact render={(props) => <Tasks {...nav.routeProps(props)} />}/>
+                            <Route path="/" render={(props) => <Tasks {...nav.routeProps(props)} />} exact/>
                             <Route path="/tasks" render={(props) => <Tasks {...nav.routeProps(props)} />} />
-                            <Route path="/task/add" render={(props) => <TaskDetail {...nav.routeProps(props)} />} />
-                            <Route path="/task/:id" render={(props) => <TaskDetail {...nav.routeProps(props)} />} />
+                            <Route path="/task/add" render={(props) => <TaskAdd {...nav.routeProps(props)} />} />
+                            <Route path="/task/:id" render={(props) => <TaskDetail {...nav.routeProps(props)} />} exact/>
+                            <Route path="/task/:id/edit" render={(props) => <TaskEdit {...nav.routeProps(props)} />} />
                             <Route path="/statistics" render={(props) => <Statistics {...nav.routeProps(props)} />} />
                         </Switch>
                     </Container>

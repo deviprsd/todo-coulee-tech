@@ -1,14 +1,12 @@
 import React, { useEffect, useReducer } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Fab, Zoom } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { AddRounded } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { RouteProps, TaskMenuActions } from '../explicit-types';
+import { RouteProps, TaskMenuActions, Query } from '../explicit-types';
 import TaskMenu from '../components/TaskMenu';
-
-enum Query {
-    ALL, CHECKED, UNCHECKED, DELETE, REFRESH
-}
+import { tasks } from './FakeTaskService';
+import TaskList from '../components/TaskList';
 
 type State = {
     query: Query
@@ -19,7 +17,17 @@ type Action = {
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    root: {},
+    root: {
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+
+        [theme.breakpoints.up('sm')]: {
+            paddingTop: theme.spacing(5),
+            paddingBottom: theme.spacing(5),
+            paddingRight: theme.spacing(3),
+            paddingLeft: theme.spacing(3),
+        }
+    },
     fab: {
         position: 'absolute',
         bottom: theme.spacing(2),
@@ -65,16 +73,18 @@ const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu }) =>
     useEffect(() => {
         setNavTitle('Tasks');
         setDrawerMenu('Tasks');
-        setMenu(<TaskMenu filter={handleFilterDispatch} />);
+        setMenu(<TaskMenu filter={handleFilterDispatch} count={{all: 2, completed: 1, uncompleted: 1}} />);
     }, [setNavTitle, setMenu, setDrawerMenu]);
     
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
+            <TaskList tasks={tasks} query={state.query} />
+
             <Zoom in={true} style={{ transitionDelay: '100ms' }}>
                 <Fab component={RouterLink} to="/task/add" color="secondary" className={classes.fab}>
-                    <Add />
+                    <AddRounded />
                 </Fab>
             </Zoom>
         </div>
