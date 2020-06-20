@@ -5,11 +5,11 @@ import {
     FilterListRounded, MoreVertRounded
 } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { TaskMenuActions } from '../explicit-types';
+import { TaskMenuActions, TaskMenuCount } from '../explicit-types';
 
 interface TaskMenuProps {
     filter: (type: TaskMenuActions) => void,
-    count: {all: number, completed: number, uncompleted: number}
+    count: TaskMenuCount
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

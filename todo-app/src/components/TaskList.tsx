@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
     Paper, List, ListItem, ListItemIcon, Checkbox, ListItemText, 
     ListItemSecondaryAction, IconButton, Typography, Box 
@@ -25,20 +25,16 @@ const useFilter = (query: Query) => {
 const TaskList: React.FC<TaskListProps> = ({ tasks, query }) => {
     const queryFilter = useFilter(query);
 
-    const [taskList, setTaskList] = useState(tasks)
     const handleActiveToggle = (idx: number) => {
-        const temp = tasks.slice();
-        temp[idx].active = !temp[idx].active;
-        setTaskList(temp);
     }
 
-    const filteredTasks = taskList.filter(queryFilter);
+    const taskList = tasks.filter(queryFilter);
 
     return (
         <Paper elevation={2}>
-            { filteredTasks.length ? (
+            { taskList.length ? (
                 <List>
-                    {filteredTasks.map((task, idx) => {
+                    {taskList.map((task, idx) => {
                         const labelId = `task-list-${idx}`;
 
                         return (

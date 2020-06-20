@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from 'react';
+import React, { useReducer, useRef, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { Paper, TextField, MenuItem } from "@material-ui/core";
 import { v4 as uuidv4 } from 'uuid';
@@ -7,11 +7,11 @@ import { Task } from '../explicit-types';
 const status = [
     {
       value: 'ACTIVE',
-      label: 'Completed',
+      label: 'Pending',
     },
     {
       value: 'INACTIVE',
-      label: 'Pending',
+      label: 'Completed',
     },
 ];
 
@@ -65,12 +65,12 @@ const reducer = (state: State, action: Action) => {
                 ...state.error,
                 ...action.payload.error
             }};
-        default: return state;
+        default: return {...state, ...action.payload};
     }
 }
 
-const useValidator = (title = '', description = '', active = 'INACTIVE'): 
-    [State, (dispatchType: string) => (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void] => {
+const useValidator = (): 
+    [State, (dispatchType: string) => (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void, React.Dispatch<Action>] => {
     const [state, dispatch] = useReducer(reducer, {
         error: {
             title: false,
@@ -78,9 +78,9 @@ const useValidator = (title = '', description = '', active = 'INACTIVE'):
             description: false,
             descriptionErrMessage: null,
         },
-        title: title,
-        description: description,
-        active: active
+        title: '',
+        description: '',
+        active: 'ACTIVE'
     });
 
     const validator = (dispatchType: string) => {
@@ -129,7 +129,7 @@ const useValidator = (title = '', description = '', active = 'INACTIVE'):
         }
     }
 
-    return [state, validator];
+    return [state, validator, dispatch];
 }
 
 interface TaskAddEditFormProps {
@@ -143,12 +143,16 @@ interface TaskAddEditFormProps {
 
 const TaskAddEditForm: React.FC<TaskAddEditFormProps> = ({ title, description, active, id, handleSubmit, formRef }) => {
     const classes = useStyles();
-    const [state, validator] = useValidator(title, description, active);
+    const [state, validator, setState] = useValidator();
     const titleInputRef = useRef<HTMLElement>(null);
     const descriptionInputRef = useRef<HTMLElement>(null);
 
+    useEffect(() => {
+        setState({type: 'RESET', payload: {title, description, active}});
+    }, [setState, active, title, description]);
+
     const handleAddEditSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
-        // change event doesn't trigger
+        // change event doesn't trigger so using blur to workaround force validation for better feedback to the user
         const evt = new Event('blur', { bubbles: true })
         titleInputRef.current!.dispatchEvent(evt);
         descriptionInputRef.current!.dispatchEvent(evt);

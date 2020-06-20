@@ -1,11 +1,10 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Fab, Zoom } from '@material-ui/core';
 import { AddRounded } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { RouteProps, TaskMenuActions, Query } from '../explicit-types';
+import { RouteProps, TaskMenuActions, Query, Task, TaskMenuCount } from '../explicit-types';
 import TaskMenu from '../components/TaskMenu';
-import { tasks } from './FakeTaskService';
 import TaskList from '../components/TaskList';
 
 type State = {
@@ -64,17 +63,43 @@ const reducer = (state: State, action: Action) => {
     }
 }
 
-const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu }) => {
+const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu, db }) => {
     const [state, dispatch] = useReducer(reducer, { query: Query.ALL });
     const handleFilterDispatch = (type: TaskMenuActions) => {
         dispatch({ query: type })
     };
 
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [count, setCount] = useState<TaskMenuCount>({
+        all: 0,
+        completed: 0,
+        uncompleted: 0
+    });
+
+    useEffect(() => {
+        setMenu(<TaskMenu filter={handleFilterDispatch} count={count} />);
+    }, [setMenu, count])
+
     useEffect(() => {
         setNavTitle('Tasks');
         setDrawerMenu('Tasks');
-        setMenu(<TaskMenu filter={handleFilterDispatch} count={{all: 2, completed: 1, uncompleted: 1}} />);
-    }, [setNavTitle, setMenu, setDrawerMenu]);
+        db.transaction('rw', db.tasks, async () => {
+            const allTasks = await db.tasks.toArray();
+
+            if (allTasks) {
+                setTasks(allTasks as Task[]);
+            }
+
+            const countAll = await db.tasks.count();
+            const countCompleted = await db.tasks.where({state: 'INACTIVE'}).count();
+
+            setCount({
+                all: countAll,
+                completed: countCompleted,
+                uncompleted: countAll - countCompleted
+            });
+        });
+    }, [setNavTitle,  setDrawerMenu, db]);
     
     const classes = useStyles();
 

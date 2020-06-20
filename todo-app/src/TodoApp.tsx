@@ -1,9 +1,10 @@
-import React, { Suspense, lazy, useState, useCallback } from 'react';
+import React, { Suspense, lazy, useState, useCallback, useMemo } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, LinearProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Nav from './components/Nav';
 import { NullProps, DrawerMenuActions } from './explicit-types';
+import { TaskDatabase } from './db/TaskDatabase';
 
 const Tasks = lazy(() => import('./routes/Tasks'));
 const TaskDetail = lazy(() => import('./routes/TaskDetail'));
@@ -39,11 +40,16 @@ const useNav = () => {
         setDrawerSelected(selected);
     }, []);
 
+    const db = useMemo(() => {
+        return new TaskDatabase();
+    }, []);
+
     return {
         routeProps: (props: any) => ({
             setNavTitle: handleTitleChanges,
             setMenu: handleMenuChanges,
             setDrawerMenu: handleDrawerSelectedChanges,
+            db: db,
             ...props
         }),
         title: title,
