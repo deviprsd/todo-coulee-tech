@@ -5,29 +5,29 @@ import {
 } from '@material-ui/core';
 import { CallMadeRounded } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
-import { Task, Query } from '../explicit-types';
+import { Task, Query, TaskMenuActions } from '../explicit-types';
 
 interface TaskListProps {
     tasks: Task[],
-    query: Query
+    query: Query,
+    handleToggle: (type: TaskMenuActions, idx?: string, active?: boolean) => void,
 }
 
 const useFilter = (query: Query) => {
     return (task: Task) => {
         switch (query) {
+            case Query.DELETE:
+            case Query.REFRESH:
             case Query.ALL: return true;
+
             case Query.CHECKED: return task.active === false;
             case Query.UNCHECKED: return task.active === true;
         }
     }
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, query }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, query, handleToggle }) => {
     const queryFilter = useFilter(query);
-
-    const handleActiveToggle = (idx: number) => {
-    }
-
     const taskList = tasks.filter(queryFilter);
 
     return (
@@ -38,7 +38,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, query }) => {
                         const labelId = `task-list-${idx}`;
 
                         return (
-                            <ListItem key={task.id} button onClick={() => handleActiveToggle(idx)}>
+                            <ListItem key={task.id} button onClick={() => handleToggle('TOGGLE', task.id, task.active)}>
                                 <ListItemIcon>
                                     <Checkbox
                                         edge="start"

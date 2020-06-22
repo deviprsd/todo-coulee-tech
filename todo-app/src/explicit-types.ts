@@ -12,7 +12,7 @@ export interface RouteProps {
 }
 
 export type DrawerMenuActions = 'Tasks' | 'Statistics' | null;
-export type TaskMenuActions = 'ALL' | 'COMPLETED' | 'UNCOMPLETED' | 'REFRESH' | 'DELETE';
+export type TaskMenuActions = 'ALL' | 'COMPLETED' | 'UNCOMPLETED' | 'REFRESH' | 'DELETE' | 'TOGGLE';
 
 export interface TaskMenuCount {
     all: number,

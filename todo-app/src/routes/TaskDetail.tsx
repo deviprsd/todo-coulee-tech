@@ -58,11 +58,10 @@ const TaskDetail: React.FC<RouteProps> = ({ setNavTitle, setDrawerMenu, setMenu,
     }, [setNavTitle, setDrawerMenu, setMenu, db, params.id]);
 
     const handleActiveToggle = async () => {
-        await db.tasks.put({
-            ...task,
+        await db.tasks.update(task.id, {
             active: !task.active,
             state: !task.active ? 'ACTIVE' : 'INACTIVE'
-        }, task.id);
+        });
         const taskFromId = await db.tasks.get(task.id);
 
         if(taskFromId) {

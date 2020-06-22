@@ -1,6 +1,6 @@
 import React from 'react';
 import { IconButton } from '@material-ui/core';
-import { DeleteRounded } from '@material-ui/icons';
+import { DeleteRounded, ArrowBackRounded } from '@material-ui/icons';
 import { TaskDatabase } from '../db/TaskDatabase';
 import { useHistory } from 'react-router-dom';
 
@@ -20,6 +20,9 @@ const TaskDetailMenu: React.FC<TaskDetailMenuProps> = ({ db, id }) => {
 
     return (
         <div style={{display: 'flex'}}>
+            <IconButton color="inherit" onClick={() => history.goBack()}>
+                <ArrowBackRounded />
+            </IconButton>
             <IconButton color="inherit" onClick={handleDelete}>
                 <DeleteRounded />
             </IconButton>

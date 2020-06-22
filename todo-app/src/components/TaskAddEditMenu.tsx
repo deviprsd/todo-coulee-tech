@@ -1,12 +1,15 @@
 import React from 'react';
 import { IconButton } from '@material-ui/core';
-import { DoneRounded } from '@material-ui/icons';
+import { DoneRounded, ArrowBackRounded } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
 
 interface TaskAddEditMenuProps {
     form: HTMLFormElement | null
 }
 
 const TaskAddEditMenu: React.FC<TaskAddEditMenuProps> = ({ form }) => {
+    const history = useHistory(); 
+
     const handleFormSubmit = () => {
         if (form) {
             if (typeof form.requestSubmit === 'function') {
@@ -19,6 +22,9 @@ const TaskAddEditMenu: React.FC<TaskAddEditMenuProps> = ({ form }) => {
 
     return (
         <div style={{display: 'flex'}}>
+            <IconButton color="inherit" onClick={() => history.goBack()}>
+                <ArrowBackRounded />
+            </IconButton>
             <IconButton color="inherit" onClick={handleFormSubmit}>
                 <DoneRounded />
             </IconButton>
