@@ -1,10 +1,28 @@
 {
-    "tasks": [
-        {
-            "id": "a792a14b-33f5-4299-8e85-e95949a7e0b2",
-            "title": "Build Tower In Pisa",
-            "description": "Pisa is a beautiful place to build a tower",
-            "active": false
-        }
-    ]
+  "tasks": [
+    {
+      "id": "a792a14b-33f5-4299-8e85-e95949a7e0b2",
+      "title": "Build Tower In Pisa",
+      "description": "Pisa is a beautiful place to build a tower",
+      "active": false,
+      "sync": true,
+      "state": "INACTIVE"
+    },
+    {
+      "id": "825b5a64-54e9-43bb-92a8-4a9026269e2c",
+      "title": "Test 1",
+      "description": "Hello",
+      "active": false,
+      "sync": true,
+      "state": "INACTIVE"
+    },
+    {
+      "id": "e6ace54f-e802-4ef7-9931-05f84d425cc6",
+      "title": "Test 2",
+      "description": "Hello Coca Cola",
+      "active": false,
+      "sync": true,
+      "state": "INACTIVE"
+    }
+  ]
 }

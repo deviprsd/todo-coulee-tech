@@ -6,6 +6,8 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteProps, TaskMenuActions, Query, Task, TaskMenuCount } from '../explicit-types';
 import TaskMenu from '../components/TaskMenu';
 import TaskList from '../components/TaskList';
+import axios from 'axios';
+import { ITask } from '../db/TaskDatabase';
 
 type State = {
     query: Query,
@@ -96,13 +98,13 @@ const Tasks: React.FC<RouteProps> = ({ setNavTitle, setMenu, setDrawerMenu, db }
 
     useEffect(() => {
         db.transaction('rw', db.tasks, async () => {
-            if(state.query === Query.DELETE) {
+            if (state.query === Query.DELETE) {
                 await db.tasks.where({state: 'INACTIVE'}).delete();
-            } else if(state.task.idx !== null) {
+            } else if (state.task.idx !== null) {
                 await db.tasks.update(state.task.idx, {
                     active: !state.task.active,
                     state: !state.task.active ? 'ACTIVE' : 'INACTIVE'
-                })
+                });
             }
 
             const allTasks = await db.tasks.toArray();

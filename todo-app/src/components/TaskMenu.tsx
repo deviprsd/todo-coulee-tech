@@ -6,6 +6,7 @@ import {
 } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { TaskMenuActions, TaskMenuCount } from '../explicit-types';
+import { Offline, Online } from 'react-detect-offline';
 
 interface TaskMenuProps {
     filter: (type: TaskMenuActions) => void,
@@ -135,8 +136,11 @@ const TaskMenu: React.FC<TaskMenuProps> = ({ filter, count }) => {
               open={isMoreOpen}
               onClose={closeMoreMenu()}
               keepMounted>
-                <MenuItem onClick={closeMoreMenu(() => { filter('REFRESH') })}>Refresh List</MenuItem>
-                <MenuItem onClick={closeMoreMenu(() => { filter('DELETE') })}>Delete Completed</MenuItem>
+                <Online>
+                    <MenuItem onClick={closeMoreMenu(() => { setDisabledAndQuery('REFRESH', 1) })}>Sync and Refresh</MenuItem>
+                </Online>
+                <Offline><MenuItem disabled>Sync and Refresh (Offline)</MenuItem></Offline>
+                <MenuItem onClick={closeMoreMenu(() => { setDisabledAndQuery('DELETE', 1) })}>Delete Completed</MenuItem>
             </Menu>
             <Menu 
               anchorEl={filterEl}
